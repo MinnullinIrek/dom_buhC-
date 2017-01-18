@@ -3,7 +3,8 @@
 MyClass::MyClass(QWidget *parent)
 	: QMainWindow(parent)
 {
-	ui.setupUi(this);
+	QTableView* w = new QTableView(this);
+	//ui.setupUi(this);
 }
 
 MyClass::~MyClass()

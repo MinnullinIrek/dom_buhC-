@@ -2,7 +2,9 @@
 #define MYCLASS_H
 
 #include <QtWidgets/QMainWindow>
+#include <qtableview.h>
 #include "ui_myclass.h"
+
 
 class MyClass : public QMainWindow
 {
@@ -13,7 +15,7 @@ public:
 	~MyClass();
 
 private:
-	Ui::MyClassClass ui;
+//	Ui::MyClassClass ui;
 };
 
 #endif // MYCLASS_H
