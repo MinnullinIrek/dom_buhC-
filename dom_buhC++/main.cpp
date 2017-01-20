@@ -8,7 +8,6 @@ int main(int argc, char *argv[])
 	MyClass w;
 	w.show();
 	QString str = "lite";
-	sqlite3 *db = NULL;
-	sqlite3_open(str.toUtf8().data(), &db);
+	
 	return a.exec();
 }
