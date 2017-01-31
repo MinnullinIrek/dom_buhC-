@@ -9,6 +9,8 @@ public:
 	int rowCount(const QString &table);
 	~CSqlite();
 	sqlite3 *db = NULL;
+	int rows(QString &sql);
+
 public:
 	int field_num;
 	char **fields;

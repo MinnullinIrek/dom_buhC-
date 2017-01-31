@@ -2,7 +2,7 @@
 #define MYCLASS_H
 
 #include <QtWidgets/QMainWindow>
-#include <qtableview.h>
+#include "tablemodel.h"
 #include "ui_myclass.h"
 
 

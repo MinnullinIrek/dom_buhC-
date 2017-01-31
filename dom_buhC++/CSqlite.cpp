@@ -1,5 +1,7 @@
 #include "CSqlite.h"
 #include "sqlite3.h"
+#include "qhash.h"
+
 
 int data_callback(void *csqlite, int field_num, char **fields, char **field_names)
 {
@@ -31,6 +33,19 @@ void CSqlite::dostring(QString &s)
 {
 
 }
+
+int CSqlite::rows(QString &sql)
+{
+	sqlite3_stmt *st = NULL;
+		
+
+	if (SQLITE_OK != sqlite3_prepare_v2(db, sql.toUtf8().data(), sql.length(), &st, NULL))
+		throw(sqlite3_errmsg(db));
+	return 0;
+
+}
+
+
 
 int CSqlite::rowCount(const QString &table)
 {

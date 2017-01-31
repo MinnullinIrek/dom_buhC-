@@ -3,7 +3,8 @@
 MyClass::MyClass(QWidget *parent)
 	: QMainWindow(parent)
 {
-	QTableView* w = new QTableView(this);
+	QString s = "db";
+//	TableModel* w = new TableModel(s,1);
 	//ui.setupUi(this);
 }
 
