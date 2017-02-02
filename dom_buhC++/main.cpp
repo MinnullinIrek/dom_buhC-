@@ -13,11 +13,11 @@ int main(int argc, char *argv[])
 	//MyClass w;
 
 	QString s = "select* from accounts;";
-	TableModel model(s, 1);
+	AccTableModel model(s);
 
 	QTableView* w = new QTableView();
 	w->setModel(&model);
-	
+	QObject::connect(w, &QTableView::doubleClicked, &model, &AccTableModel::doubleClicked);
 
 	w->show();
 	QString str = "lite";

@@ -5,13 +5,12 @@
 #include "tablemodel.h"
 
 
-TableModel::TableModel(QString& script, int rows)
+AccTableModel::AccTableModel(QString& script)
 	: QAbstractTableModel(),
-	sql(new CSqlite),
 	m_nRows(0),
 	script(script)
 {
-	sqlite3 *db;
+	
 	sqlite3_open("lite", &db);
 	sqlite3_stmt *st;
 
@@ -65,26 +64,29 @@ TableModel::TableModel(QString& script, int rows)
 	}	 
 }
 
-TableModel::~TableModel()
+void AccTableModel::init()
+{
+
+
+}
+
+AccTableModel::~AccTableModel()
 {
 
 }
 
-int TableModel::rowCount(const QModelIndex &parent) const
+int AccTableModel::rowCount(const QModelIndex &parent) const
 {
-	return this->m_nRows;
+	return this->m_nRows+1;
 }
 
-int TableModel::columnCount(const QModelIndex &parent) const
+int AccTableModel::columnCount(const QModelIndex &parent) const
 {
 	return this->m_nColumns;
 }
 
-QVariant TableModel::data(const QModelIndex &index, int role) const
+QVariant AccTableModel::data(const QModelIndex &index, int role) const
 {
-
-	
-
 	if (!index.isValid()) {
 		return QVariant();
 	}
@@ -165,13 +167,65 @@ QVariant TableModel::data(const QModelIndex &index, int role) const
 
 }
 
-bool TableModel::setData(const QModelIndex& index,
+bool AccTableModel::setData(const QModelIndex& index,
 	const QVariant&    value,
 	int                nRole
 )
 {
-	if (index.isValid()) {
+	if (index.isValid()) 
+	{
 		m_hash[index] = value;
+		sqlite3_stmt *st;
+		QString script;
+
+		if (index.row() < m_nRows) {
+			
+			if (index.column() == 1 )
+				script = "Update accounts set name = ? where id = ?;";
+			else if (index.column() == 2)
+				script = "Update accounts set comment = ? where id = ?;";
+
+			if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
+				throw(sqlite3_errmsg(db));
+
+			char d[256]; sprintf(d, "%s", value.toString().toUtf8().data());
+
+			if (SQLITE_OK != sqlite3_bind_text(st, 1, d, strlen(d), SQLITE_STATIC))
+				throw(sqlite3_errmsg(sqlite3_db_handle(st)));
+
+			if (SQLITE_OK != sqlite3_bind_int(st, 2, index.row() + 1))
+				throw(sqlite3_errmsg(sqlite3_db_handle(st)));
+
+
+		}
+		else{
+
+			
+
+			if (index.column() == 1)
+				script = "insert into accounts (id, name) values(?, ?);";
+			else if (index.column() == 2)
+				script = "insert into accounts (id, comment) values(?, ?);";
+			
+			
+			if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
+				throw(sqlite3_errmsg(db));
+
+			if (SQLITE_OK != sqlite3_bind_int(st, 1, index.row() + 1))
+				throw(sqlite3_errmsg(sqlite3_db_handle(st)));
+
+			char d[256]; sprintf(d, "%s", value.toString().toUtf8().data());
+
+			if (SQLITE_OK != sqlite3_bind_text(st, 2, d, strlen(d), SQLITE_STATIC))
+				throw(sqlite3_errmsg(sqlite3_db_handle(st)));
+
+			m_nRows++;
+			insertRow(m_nRows + 1, QModelIndex());
+
+		}
+
+		if (sqlite3_step(st) != SQLITE_DONE)
+			throw(sqlite3_errmsg(sqlite3_db_handle(st)));
 
 		emit dataChanged(index, index);
 		return true;
@@ -182,9 +236,20 @@ bool TableModel::setData(const QModelIndex& index,
 	return false;
 }
 
+bool AccTableModel::insertRow(int row, const QModelIndex & parent)
+{
+	beginInsertRows(parent, row, row);
+	endInsertRows();
+	return true;
+}
 
 
-Qt::ItemFlags TableModel::flags(const QModelIndex & /*index*/) const
+Qt::ItemFlags AccTableModel::flags(const QModelIndex & /*index*/) const
 {
 	return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+}
+
+void AccTableModel::doubleClicked(const QModelIndex &index)
+{
+	emit selected(m_hash[index]);
 }
