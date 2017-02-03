@@ -1,60 +1,18 @@
-#include <qcolor.h>
-#include <qfont.h>
-#include <qsize.h>
+п»ї#include "debetcategory.hpp"
 
-#include "tablemodel.h"
-
-TableModel::TableModel() :
-	QAbstractTableModel(),
-	m_nRows(0),
-	m_nColumns(0)
-{
-	sqlite3_open("lite", &db);
-}
-
-TableModel::~TableModel()
-{
-}
-
-int TableModel::rowCount(const QModelIndex &parent) const
-{
-	return this->m_nRows + 1;
-}
-
-int TableModel::columnCount(const QModelIndex &parent) const
-{
-	return this->m_nColumns;
-}
-
-bool TableModel::insertRow(int row, const QModelIndex & parent)
-{
-	beginInsertRows(parent, row, row);
-	endInsertRows();
-	return true;
-}
-
-
-
-
-
-
-
-AccTableModel::AccTableModel(QString& script)
-	: TableModel(),
-	script(script)
-{
+DebetCategory::DebetCategory(QString& main_table) : TableModel(), table(main_table) {
 	
-	
+	QString script = QString("select * from %1").arg(table);
 	sqlite3_stmt *st;
 
 	if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
 		throw(sqlite3_errmsg(db));
 
-	 m_nColumns = sqlite3_column_count(st);
+	m_nColumns = sqlite3_column_count(st);
 
 
 
-	while (SQLITE_ROW ==  sqlite3_step(st)) {
+	while (SQLITE_ROW == sqlite3_step(st)) {
 		m_nRows++;
 
 		for (int col = 0; col < m_nColumns; col++) {
@@ -84,41 +42,36 @@ AccTableModel::AccTableModel(QString& script)
 				break;
 			}
 			default:
-				throw( "unknown type");
+				throw("unknown type");
 			}
 
-			QModelIndex index = this->index(m_nRows-1, col);
+			QModelIndex index = this->index(m_nRows - 1, col);
 			m_hash[index] = var;
 
-			
+
 		}
-	}	 
-}
-
-void AccTableModel::init()
-{
+	}
 
 
 }
 
-AccTableModel::~AccTableModel()
-{
-
+DebetCategory::~DebetCategory() {
+	
 }
 
 
-QVariant AccTableModel::data(const QModelIndex &index, int role) const
+QVariant DebetCategory::data(const QModelIndex &index, int role) const
 {
 	if (!index.isValid()) {
 		return QVariant();
 	}
-	
+
 	QVariant value;
 	value.setValue(m_hash[index]);
 
 	switch (role) {
 	case Qt::DisplayRole:
-		
+
 		return value;
 		break;
 	case Qt::EditRole:
@@ -130,17 +83,17 @@ QVariant AccTableModel::data(const QModelIndex &index, int role) const
 
 	//switch (role) {
 
-	//case Qt::DisplayRole: // Данные для отображения
-	//case Qt::EditRole:    // Данные для редактирования
-		//return value;
+	//case Qt::DisplayRole: // Р”Р°РЅРЅС‹Рµ РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ
+	//case Qt::EditRole:    // Р”Р°РЅРЅС‹Рµ РґР»СЏ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ
+	//return value;
 
-	//case Qt::TextColorRole: // Цвет текста
+	//case Qt::TextColorRole: // Р¦РІРµС‚ С‚РµРєСЃС‚Р°
 	//	if (index.column() == 1)
 	//		return qVariantFromValue(QColor(Qt::blue));
 	//	else
 	//		return value;
 
-	//case Qt::TextAlignmentRole: // Выравнивание
+	//case Qt::TextAlignmentRole: // Р’С‹СЂР°РІРЅРёРІР°РЅРёРµ
 	//	if (index.column() == 3)
 	//		return int(Qt::AlignRight | Qt::AlignVCenter);
 	//	else if (index.column() == 2 || index.column() == 4)
@@ -149,7 +102,7 @@ QVariant AccTableModel::data(const QModelIndex &index, int role) const
 	//		return int(Qt::AlignLeft | Qt::AlignVCenter);
 
 
-	//case Qt::FontRole: // Шрифт
+	//case Qt::FontRole: // РЁСЂРёС„С‚
 	//	if (index.column() == 1) {
 	//		QFont font = QFont("Helvetica", 10, QFont::Bold);
 	//		return qVariantFromValue(font);
@@ -158,7 +111,7 @@ QVariant AccTableModel::data(const QModelIndex &index, int role) const
 	//		return value;
 
 
-	//case Qt::BackgroundColorRole: {  // Цвет фона
+	//case Qt::BackgroundColorRole: {  // Р¦РІРµС‚ С„РѕРЅР°
 	//	int a = (index.row() % 2) ? 14 : 0;
 	//	if (index.column() == 0)
 	//		return qVariantFromValue(QColor(220, 240 - a, 230 - a));
@@ -168,14 +121,14 @@ QVariant AccTableModel::data(const QModelIndex &index, int role) const
 	//		return value;
 	//}
 
-	//case Qt::CheckStateRole:  // Галочка
+	//case Qt::CheckStateRole:  // Р“Р°Р»РѕС‡РєР°
 	//	if (index.column() == 4)
 	//		return (value.toInt() != 0) ?
 	//		Qt::Checked : Qt::Unchecked;
 	//	else
 	//		return value;
 
-	//case Qt::SizeHintRole:  // Размер ячейки
+	//case Qt::SizeHintRole:  // Р Р°Р·РјРµСЂ СЏС‡РµР№РєРё
 	//	if (index.column() == 0)
 	//		return QSize(70, 10);
 	//	if (index.column() == 4)
@@ -189,23 +142,23 @@ QVariant AccTableModel::data(const QModelIndex &index, int role) const
 
 }
 
-bool AccTableModel::setData(const QModelIndex& index,
+bool DebetCategory::setData(const QModelIndex& index,
 	const QVariant&    value,
 	int                nRole
 )
 {
-	if (index.isValid()) 
+	if (index.isValid())
 	{
 		m_hash[index] = value;
 		sqlite3_stmt *st;
 		QString script;
 
 		if (index.row() < m_nRows) {
-			
-			if (index.column() == 1 )
-				script = "Update accounts set name = ? where id = ?;";
-			else if (index.column() == 2)
-				script = "Update accounts set comment = ? where id = ?;";
+
+			if (index.column() == 1)
+				script = QString("Update %1 set name = ? where id = ?;").arg(table);
+			//else if (index.column() == 2)
+				//script = "Update debet_category set comment = ? where id = ?;";
 
 			if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
 				throw(sqlite3_errmsg(db));
@@ -220,16 +173,13 @@ bool AccTableModel::setData(const QModelIndex& index,
 
 
 		}
-		else{
-
-			
-
+		else {
 			if (index.column() == 1)
-				script = "insert into accounts (id, name) values(?, ?);";
-			else if (index.column() == 2)
-				script = "insert into accounts (id, comment) values(?, ?);";
-			
-			
+				script = QString("insert into %1 (id, name) values(?, ?);").arg(table);
+			//else if (index.column() == 2)
+				//script = "insert into accounts (id, comment) values(?, ?);";
+
+
 			if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
 				throw(sqlite3_errmsg(db));
 
@@ -258,15 +208,16 @@ bool AccTableModel::setData(const QModelIndex& index,
 	return false;
 }
 
+//bool DebetCategory::insertRow(int row, const QModelIndex & parent)
+//{
+//	beginInsertRows(parent, row, row);
+//	endInsertRows();
+//	return true;
+//}
 
 
-
-Qt::ItemFlags AccTableModel::flags(const QModelIndex & /*index*/) const
+Qt::ItemFlags DebetCategory::flags(const QModelIndex & /*index*/) const
 {
 	return Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
 }
 
-void AccTableModel::doubleClicked(const QModelIndex &index)
-{
-	emit selected(m_hash[index]);
-}
