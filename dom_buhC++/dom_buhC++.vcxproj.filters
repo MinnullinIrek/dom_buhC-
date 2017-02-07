@@ -68,9 +68,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_debetcategory.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="MyDCedet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="debet_type.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -80,8 +77,14 @@
     <ClCompile Include="GeneratedFiles\Release\moc_debet_type.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_MyDCedet.cpp">
+    <ClCompile Include="ctdtable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_ctdtable.cpp">
       <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_ctdtable.cpp">
+      <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,7 +100,7 @@
     <CustomBuild Include="debet_type.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="MyDCedet.h">
+    <CustomBuild Include="ctdtable.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

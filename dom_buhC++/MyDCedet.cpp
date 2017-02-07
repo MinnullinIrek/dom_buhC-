@@ -2,11 +2,11 @@
 
 
 
-MyDCedet::MyDCedet(QString mainTable, QWidget *parent = nullptr):QWidget(parent), table(mainTable)
-{
-}
-
-
-MyDCedet::~MyDCedet()
-{
-}
+//MyDCedet::MyDCedet(QString mainTable, QWidget *parent = nullptr):QWidget(parent), table(mainTable)
+//{
+//}
+//
+//
+//MyDCedet::~MyDCedet()
+//{
+//}
