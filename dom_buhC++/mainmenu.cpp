@@ -16,6 +16,8 @@ MainMenu::MainMenu(QWidget *parent)
 	layout->addWidget(credit_types, 2, 2);
 
 
+
+
 }
 
 MainMenu::~MainMenu()
