@@ -16,6 +16,7 @@ protected:
 	int columnCount(const QModelIndex &parent) const;
 	sqlite3 *db;
 	bool insertRow(int row, const QModelIndex & parent);
+	bool removeRows(int position, int rows, const QModelIndex &parent);
 public:
 	TableModel();
 	~TableModel();
@@ -38,6 +39,8 @@ public:
 public slots:
 	void doubleClicked(const QModelIndex &index);
 protected:
+
+	mutable QVariant oldValue;
 	virtual void init();
 
 

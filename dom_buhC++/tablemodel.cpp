@@ -33,6 +33,14 @@ bool TableModel::insertRow(int row, const QModelIndex & parent)
 	return true;
 }
 
+bool TableModel::removeRows(int position, int rows, const QModelIndex &parent )
+{
+	if (rows > 0) rows--;
+	beginRemoveRows(parent, position, position + rows);
+	endRemoveRows();
+	return true;
+}
+
 
 
 
@@ -122,7 +130,7 @@ QVariant AccTableModel::data(const QModelIndex &index, int role) const
 		return value;
 		break;
 	case Qt::EditRole:
-
+		oldValue.setValue(m_hash[index]);
 		return value;
 		break;
 	}
@@ -202,44 +210,26 @@ bool AccTableModel::setData(const QModelIndex& index,
 
 		if (index.row() < m_nRows) {
 			
-			if (index.column() == 1 )
-				script = "Update accounts set name = ? where id = ?;";
-			else if (index.column() == 2)
-				script = "Update accounts set comment = ? where id = ?;";
+			if (index.column() == 0 )
+				script = QString("Update accounts set name = \"%1\" where name = \"%2\";").arg(value.toString()).arg(oldValue.toString());
+			else if (index.column() == 1) {
+				QModelIndex newIndex = this->index(index.row(), 0);
+				script = QString("Update accounts set comment = \"%1\" where name = \"%2\";").arg(value.toString()).arg(m_hash[newIndex].toString());
+			}
 
 			if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
 				throw(sqlite3_errmsg(db));
-
-			char d[256]; sprintf(d, "%s", value.toString().toUtf8().data());
-
-			if (SQLITE_OK != sqlite3_bind_text(st, 1, d, strlen(d), SQLITE_STATIC))
-				throw(sqlite3_errmsg(sqlite3_db_handle(st)));
-
-			if (SQLITE_OK != sqlite3_bind_int(st, 2, index.row() + 1))
-				throw(sqlite3_errmsg(sqlite3_db_handle(st)));
-
-
 		}
 		else{
 
-			
-
-			if (index.column() == 1)
-				script = "insert into accounts (id, name) values(?, ?);";
-			else if (index.column() == 2)
-				script = "insert into accounts (id, comment) values(?, ?);";
+			if (index.column() == 0)
+				script = QString("insert into accounts (name) values(\"%1\");").arg(value.toString());
+			else if (index.column() == 1)
+				script = QString("insert into accounts (comment) values(\"%1\");").arg(value.toString());
 			
 			
 			if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
 				throw(sqlite3_errmsg(db));
-
-			if (SQLITE_OK != sqlite3_bind_int(st, 1, index.row() + 1))
-				throw(sqlite3_errmsg(sqlite3_db_handle(st)));
-
-			char d[256]; sprintf(d, "%s", value.toString().toUtf8().data());
-
-			if (SQLITE_OK != sqlite3_bind_text(st, 2, d, strlen(d), SQLITE_STATIC))
-				throw(sqlite3_errmsg(sqlite3_db_handle(st)));
 
 			m_nRows++;
 			insertRow(m_nRows + 1, QModelIndex());

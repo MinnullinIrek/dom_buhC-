@@ -75,7 +75,7 @@ QVariant DebetCategory::data(const QModelIndex &index, int role) const
 		return value;
 		break;
 	case Qt::EditRole:
-
+		oldValue.setValue(m_hash[index]);
 		return value;
 		break;
 	}
@@ -154,28 +154,29 @@ bool DebetCategory::setData(const QModelIndex& index,
 		QString script;
 
 		if (index.row() < m_nRows) {
+			QVariant v =this->data(index, Qt::DisplayRole);
 
-			if (index.column() == 1)
-				script = QString("Update %1 set name = ? where id = ?;").arg(table);
+			script = QString("Update %1 set name = \"%2\" where name = \"%3\";").arg(table).arg(value.toString()).arg(oldValue.toString());
 			//else if (index.column() == 2)
 				//script = "Update debet_category set comment = ? where id = ?;";
 
 			if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
 				throw(sqlite3_errmsg(db));
 
-			char d[256]; sprintf(d, "%s", value.toString().toUtf8().data());
-
-			if (SQLITE_OK != sqlite3_bind_text(st, 1, d, strlen(d), SQLITE_STATIC))
+			if (sqlite3_step(st) != SQLITE_DONE)
 				throw(sqlite3_errmsg(sqlite3_db_handle(st)));
 
-			if (SQLITE_OK != sqlite3_bind_int(st, 2, index.row() + 1))
-				throw(sqlite3_errmsg(sqlite3_db_handle(st)));
+			QString type_tbl = QString(table).remove(QRegExp("_category$"));
 
+			script = QString("Update %1_type set category_name = \"%2\" where category_name = \"%3\";").arg(type_tbl).arg(value.toString()).arg(oldValue.toString());
+
+			if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
+				throw(sqlite3_errmsg(db));
 
 		}
 		else {
-			if (index.column() == 1)
-				script = QString("insert into %1 (id, name) values(?, ?);").arg(table);
+
+			script = QString("insert into %1 (name) values(?);").arg(table);
 			//else if (index.column() == 2)
 				//script = "insert into accounts (id, comment) values(?, ?);";
 
@@ -183,12 +184,12 @@ bool DebetCategory::setData(const QModelIndex& index,
 			if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
 				throw(sqlite3_errmsg(db));
 
-			if (SQLITE_OK != sqlite3_bind_int(st, 1, index.row() + 1))
-				throw(sqlite3_errmsg(sqlite3_db_handle(st)));
+			//if (SQLITE_OK != sqlite3_bind_int(st, 1, index.row() + 1))
+			//	throw(sqlite3_errmsg(sqlite3_db_handle(st)));
 
 			char d[256]; sprintf(d, "%s", value.toString().toUtf8().data());
 
-			if (SQLITE_OK != sqlite3_bind_text(st, 2, d, strlen(d), SQLITE_STATIC))
+			if (SQLITE_OK != sqlite3_bind_text(st, 1, d, strlen(d), SQLITE_STATIC))
 				throw(sqlite3_errmsg(sqlite3_db_handle(st)));
 
 			m_nRows++;

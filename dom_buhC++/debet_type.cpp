@@ -1,16 +1,29 @@
 #include "debet_type.h"
 #include <qmessagebox.h>
-Debet_type::Debet_type(QString main_table, int cat_id)
+Debet_type::Debet_type(QString &main_table, QString & c_name)
 	: TableModel(),
-	table(main_table),
-	cat_id(cat_id)
+	table(main_table)
 {
 
 	//QString category = "debet_category";
 	//if (table == "debet_type")
 	//	category = "credit_ctegory";
+	init(c_name);
+	
+}
 
-	QString script = QString("select * from %1 where category_id = %3 ").arg(table).arg(cat_id);
+void Debet_type::init(QString &c_id)
+{
+	m_hash.clear();
+
+	if (m_nRows > 0)
+		removeRows(0, m_nRows, QModelIndex());
+
+	m_nRows = 0;
+	category_name = c_id;
+	
+
+	QString script = QString("select name from %1 where category_name = \"%2\"; ").arg(table).arg(category_name);
 	sqlite3_stmt *st;
 
 	if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
@@ -55,12 +68,15 @@ Debet_type::Debet_type(QString main_table, int cat_id)
 
 			QModelIndex index = this->index(m_nRows - 1, col);
 			m_hash[index] = var;
-
+			insertRow(m_nRows + 1, QModelIndex());
 
 		}
 	}
 
+
+
 }
+
 
 Debet_type::~Debet_type()
 {
@@ -83,7 +99,7 @@ QVariant Debet_type::data(const QModelIndex &index, int role) const
 		return value;
 		break;
 	case Qt::EditRole:
-
+		oldValue.setValue(m_hash[index]);
 		return value;
 		break;
 	}
@@ -97,7 +113,8 @@ bool Debet_type::setData(const QModelIndex& index,
 	int                nRole
 )
 {
-	if (index.isValid())
+
+	if (index.isValid() && category_name != "")
 	{
 		m_hash[index] = value;
 		sqlite3_stmt *st;
@@ -105,45 +122,22 @@ bool Debet_type::setData(const QModelIndex& index,
 
 		if (index.row() < m_nRows) {
 
-			if (index.column() == 1)
-				script = QString("Update %1 set name = ? where id = ?;").arg(table);
+			
+			script = QString("Update %1 set name = \"%2\" where name = \"%3\";").arg(table).arg(value.toString()).arg(oldValue.toString());
 			//else if (index.column() == 2)
 			//script = "Update debet_category set comment = ? where id = ?;";
 
 			if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
 				throw(sqlite3_errmsg(db));
-
-			char d[256]; sprintf(d, "%s", value.toString().toUtf8().data());
-
-			if (SQLITE_OK != sqlite3_bind_text(st, 1, d, strlen(d), SQLITE_STATIC))
-				throw(sqlite3_errmsg(sqlite3_db_handle(st)));
-
-
-			if (SQLITE_OK != sqlite3_bind_int(st, 2, index.row() + 1))
-				throw(sqlite3_errmsg(sqlite3_db_handle(st)));
-
-
 		}
 		else {
 			try
 			{
-				if (index.column() == 2)
-					script = QString("insert into %1 (category_id, name) values(%2, ?);").arg(table).arg(cat_id);
-				//else if (index.column() == 2)
-				//script = "insert into accounts (id, comment) values(?, ?);";
-
+				
+				script = QString("insert into %1 (category_name, name) values(\"%2\", \"%3\");").arg(table).arg(category_name).arg(value.toString());
 
 				if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
 					throw(sqlite3_errmsg(db));
-
-				//if (SQLITE_OK != sqlite3_bind_int(st, 1, index.row() + 1))
-				//	throw(sqlite3_errmsg(sqlite3_db_handle(st)));
-
-				char d[256];
-				sprintf(d, "%s", value.toString().toUtf8().data());
-
-				if (SQLITE_OK != sqlite3_bind_text(st, 1, d, strlen(d), SQLITE_STATIC))
-					throw(sqlite3_errmsg(sqlite3_db_handle(st)));
 
 				m_nRows++;
 				insertRow(m_nRows + 1, QModelIndex());

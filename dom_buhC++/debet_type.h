@@ -8,17 +8,17 @@ class Debet_type : public TableModel
 	Q_OBJECT
 
 public:
-	Debet_type(QString main_table, int cat_id);
+	Debet_type(QString &main_table, QString & c_name);
 	~Debet_type();
-
+	void init(QString &c_name);
 private:
-	int caegory_id;
+	 
 	QString table;
-	int cat_id;
+	QString category_name;
 	bool setData(const QModelIndex& index, const QVariant& value, int nRole);
 	Qt::ItemFlags flags(const QModelIndex & /*index*/) const;
 	QVariant data(const QModelIndex &index, int role) const;
-
+	mutable QVariant oldValue;
 };
 
 #endif // DEBET_TYPE_H

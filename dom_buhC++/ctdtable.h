@@ -2,6 +2,7 @@
 #define CTDTABLE_H
 
 #include <QWidget>
+#include <qitemselectionmodel.h>
 class Debet_type;
 class QTableView;
 class DebetCategory;
@@ -15,6 +16,7 @@ public:
 	~CTDTable();
 public slots:
 	void selectionChangedSlot(const QItemSelection & selected, const QItemSelection & deselected);
+	void dataChangeChangedSlot(const QModelIndex & topL, const QModelIndex & topR, const QVector<int>& roles = QVector<int>());
 private:
 	QString table;
 	Debet_type *model;
