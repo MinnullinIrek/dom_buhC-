@@ -12,7 +12,7 @@ class CTDTable : public QWidget
 	Q_OBJECT
 
 public:
-	CTDTable(QString &table, QWidget *parent);
+	CTDTable(QString &table, QWidget *parent = nullptr);
 	~CTDTable();
 public slots:
 	void selectionChangedSlot(const QItemSelection & selected, const QItemSelection & deselected);

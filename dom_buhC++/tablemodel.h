@@ -34,7 +34,7 @@ class AccTableModel : public TableModel
 	Q_OBJECT
 
 public:
-	AccTableModel(QString& script);
+	AccTableModel();
 	~AccTableModel();
 public slots:
 	void doubleClicked(const QModelIndex &index);

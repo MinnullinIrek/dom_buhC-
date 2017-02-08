@@ -47,12 +47,12 @@ bool TableModel::removeRows(int position, int rows, const QModelIndex &parent )
 
 
 
-AccTableModel::AccTableModel(QString& script)
-	: TableModel(),
-	script(script)
+AccTableModel::AccTableModel()
+	: TableModel()
+	
 {
 	
-	
+	script = "select* from accounts;";
 	sqlite3_stmt *st;
 
 	if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
