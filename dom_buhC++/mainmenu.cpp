@@ -1,4 +1,5 @@
 #include "mainmenu.h"
+#include "recordmodel.h"
 #include <qgridlayout.h>
 
 MainMenu::MainMenu(QWidget *parent)
@@ -16,7 +17,11 @@ MainMenu::MainMenu(QWidget *parent)
 	layout->addWidget(credit_types, 2, 2);
 
 
+	QTableView *v = new QTableView();
+	RecordModel *r = new RecordModel(QString("debet"));
+	v->setModel(r);
 
+	layout->addWidget(v, 1, 2);
 
 }
 

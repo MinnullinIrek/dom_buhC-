@@ -5,8 +5,7 @@ RecordModel::RecordModel(QString &table)
 	: TableModel(),
 	table(table)
 {
-
-
+	init(QString("nm2"));
 }
 
 void RecordModel::init(QString &accn)
@@ -20,7 +19,10 @@ void RecordModel::init(QString &accn)
 
 	acc = accn;
 	sqlite3_stmt *st;
-	QString script = QString("select * from %1 where account_name = \"%2\";").arg(table).arg(acc);
+	QString type_tbl = "debet_type";
+	if (table == "credit") type_tbl = "credit_type";
+	QString script = QString("SELECT %1.id, %1.summ, %1.date, %2.category_name, %1.dc_type_name, %1.comment FROM %1 left join %2 on %2.name = %1.dc_type_name WHERE %1.account_name = \"%3\";").arg(table).arg(type_tbl).arg(acc);
+	
 
 	if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
 		throw(sqlite3_errmsg(db));
@@ -90,6 +92,7 @@ QVariant RecordModel::data(const QModelIndex &index, int role) const
 		return value;
 		break;
 	case Qt::EditRole:
+		oldValue.setValue(m_hash[index]);
 		return value;
 		break;
 	}

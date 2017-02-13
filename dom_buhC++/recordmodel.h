@@ -17,6 +17,7 @@ public:
 private:
 	QString table;
 	QString acc;
+	mutable QVariant oldValue;
 
 	bool setData(const QModelIndex& index, const QVariant& value, int nRole);
 	Qt::ItemFlags flags(const QModelIndex & /*index*/) const;
