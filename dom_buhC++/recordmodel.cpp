@@ -126,8 +126,9 @@ bool RecordModel::setData(const QModelIndex& index,
 		else {
 			try
 			{
-
-				script = QString("insert into %1 (account_name, name) values(\"%2\", \"%3\");").arg(table).arg(table).arg(value.toString());
+				
+				script = QString("INSERT INTO % 1(account_name, dc_type_name, date, comment, summ) values(\"%2\", \"%3\", \"%4\", \"%5\", %6);")
+					.arg(table).arg(acc).arg(m_hash[this->index(index.row(), 5)]).arg(m_hash[this->index(index.row(), 5)]);
 
 				if (SQLITE_OK != sqlite3_prepare_v2(db, script.toUtf8().data(), script.length(), &st, NULL))
 					throw(sqlite3_errmsg(db));
