@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <qtableview.h>
+#include <qtablewidget.h>
 #include "tablemodel.h"
 class AccView : public QWidget
 {

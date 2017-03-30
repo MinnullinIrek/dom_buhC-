@@ -2,6 +2,7 @@
 #define TABLEMODEL_H
 
 #include <QAbstractTableModel>
+
 #include "CSqlite.h"
 
 class TableModel : public QAbstractTableModel
@@ -17,9 +18,11 @@ protected:
 	sqlite3 *db;
 	bool insertRow(int row, const QModelIndex & parent);
 	bool removeRows(int position, int rows, const QModelIndex &parent);
+	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 public:
-	TableModel();
+	TableModel(int i= 0);
 	~TableModel();
+	QVector<QString> headerNames;
 signals:
 	void selected(QVariant var);
 
@@ -43,12 +46,15 @@ protected:
 	mutable QVariant oldValue;
 	virtual void init();
 
+	
+
 
 	QVariant data(const QModelIndex &index, int role) const;
 	bool setData(const QModelIndex& index, const QVariant& value, int nRole);
 	Qt::ItemFlags flags(const QModelIndex & /*index*/) const;
 	QString script;
 
+	QString *qq;
 	
 };
 

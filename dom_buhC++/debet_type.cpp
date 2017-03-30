@@ -1,7 +1,7 @@
 #include "debet_type.h"
 #include <qmessagebox.h>
 Debet_type::Debet_type(QString &main_table, QString & c_name)
-	: TableModel(),
+	: TableModel(1),
 	table(main_table)
 {
 
@@ -14,6 +14,7 @@ Debet_type::Debet_type(QString &main_table, QString & c_name)
 
 void Debet_type::init(QString &c_id)
 {
+	headerNames[0] = "debet type";
 	m_hash.clear();
 
 	if (m_nRows > 0)

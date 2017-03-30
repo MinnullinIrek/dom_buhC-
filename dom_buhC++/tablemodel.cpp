@@ -1,13 +1,16 @@
 #include <qcolor.h>
 #include <qfont.h>
 #include <qsize.h>
+#include <qlabel.h>
 
 #include "tablemodel.h"
 
-TableModel::TableModel() :
+
+TableModel::TableModel(int i) :
 	QAbstractTableModel(),
 	m_nRows(0),
-	m_nColumns(0)
+	m_nColumns(0),
+	headerNames(i)
 {
 	sqlite3_open("lite", &db);
 }
@@ -41,6 +44,24 @@ bool TableModel::removeRows(int position, int rows, const QModelIndex &parent )
 	return true;
 }
 
+QVariant TableModel::headerData(int section, Qt::Orientation orientation, int role)const
+{
+	if (role != Qt::DisplayRole)
+		return QVariant();
+
+	if (orientation == Qt::Horizontal) {
+		if (headerNames.count() > section)
+			return headerNames[section];
+		else
+			return "untiteled";
+	}
+	else if (orientation == Qt::Vertical)
+	{
+		return section+1;
+	}
+	return QVariant();
+}
+
 
 
 
@@ -48,9 +69,9 @@ bool TableModel::removeRows(int position, int rows, const QModelIndex &parent )
 
 
 AccTableModel::AccTableModel()
-	: TableModel()
-	
+	: TableModel(2)
 {
+	//this->setHeaderData(1, Qt::Orientation::Horizontal, QVariant("column1"), 0);
 	
 	script = "select* from accounts;";
 	sqlite3_stmt *st;
@@ -99,13 +120,21 @@ AccTableModel::AccTableModel()
 			m_hash[index] = var;
 
 			
+			
+			headerNames[0] = "acc name";
+			headerNames[1] = "comment";
+
+			//qq = new QString("qqqq");
+	/*		this->setHeaderData(0, Qt::Horizontal, "qqqq");
+			this->setHeaderData(1, Qt::Horizontal, "qqqq");*/
 		}
 	}	 
 }
 
 void AccTableModel::init()
 {
-
+	this->setHeaderData(1, Qt::Orientation::Horizontal, QVariant("column1"), 2);
+	
 
 }
 
@@ -260,3 +289,10 @@ void AccTableModel::doubleClicked(const QModelIndex &index)
 {
 	emit selected(m_hash[index]);
 }
+
+//QLabel *l = new QLabel("str");
+//QVariant *v = new QVariant();
+
+
+
+

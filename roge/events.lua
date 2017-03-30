@@ -1,0 +1,1 @@
+local M = {}tnil = {}function M.subscribe(obj, event, func)    if not M[obj]        then M[obj] = {} end    if not M[obj][event] then M[obj][event] = {} end    table.insert(M[obj][event], func)endfunction M.send(obj, event, value, p1)    foreach(((M[obj] or tnil)[event] or tnil), function(f) f(value, p1) end)endreturn M

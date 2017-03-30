@@ -1,7 +1,7 @@
 ﻿#include "debetcategory.hpp"
 
-DebetCategory::DebetCategory(QString& main_table) : TableModel(), table(main_table) {
-	
+DebetCategory::DebetCategory(QString& main_table) : TableModel(1), table(main_table) {
+	headerNames[0] = "debet category";
 	QString script = QString("select * from %1").arg(table);
 	sqlite3_stmt *st;
 
