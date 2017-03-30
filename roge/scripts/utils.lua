@@ -1,6 +1,24 @@
 
-direct={up = "UpArrow", down = "DownArrow", left = "LeftArrow", right = "RightArrow", 
-s = "S", a= "A", w="W", d="D", e="E", q="Q", z= "Z", c="C", x="X", i = "I", esc = "Escape", enter = "Enter"}
+direct={
+up = "UpArrow", 
+down = "DownArrow", 
+left = "LeftArrow", 
+right = "RightArrow", 
+s = "S", 
+a= "A", 
+w="W", 
+d="D", 
+e="E", 
+q="Q", 
+z= "Z", 
+c="C", 
+x="X", 
+i = "I", 
+esc = "Escape", 
+enter = "Enter",
+pickUp = "P",
+
+}
 
 
 function foreach(t, f, pairF)

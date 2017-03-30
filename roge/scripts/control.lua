@@ -113,12 +113,14 @@ print("start")
         showMap(Map)
         print("showMap")
         local ch = controller:playerMove()
-        print("ch=".. ch)
+        print("ch=", ch)
         if ch == direct.c then
             characs:show()
         elseif ch == direct.i then
-        print("ch=", "inventory")
+            print("ch=", "inventory")
             lunit.inventory:show(lunit)
+        elseif ch == direct.pickUp then
+            print("PickUP")
         else
             Map.mover:Move(ch)
         end
