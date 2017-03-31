@@ -1,15 +1,18 @@
- dname = "screen"
-local foreachTOstr = function(tbl)
-    local str = "\n"
-    for i, k in pairs(tbl) do
-        str = str.." "..tostring(k)
-    end
-    return str
-end
+local dname = "screen"
+-- local foreachTOstr = function(tbl)
+    -- local str = "\n"
+    -- for i, k in pairs(tbl) do
+        -- str = str.." "..tostring(k)
+    -- end
+    -- return str
+-- end
 
-print = function (...)
-    form:setText(foreachTOstr({...}))
-end
+-- print = function (...)
+    -- form:setText(foreachTOstr({...}))
+-- end
+
+
+
 print("asdff")
 local function deb(...)
     print("SCREEN ", ...)
@@ -71,15 +74,23 @@ end
 Screen = {messages = {}}
 
 Screen.screen = screen
-Screen.showMap = function (cells,control, consolHeight, consolWidth, startX, startY)
+function Screen.showMap(cells, control, consolHeight, consolWidth, startX, startY)
     print("showMap")
     screen:clear()
-    
+
     for i, cell in ipairs(cells) do
         local visChar = cell:getVisual()
         screen:SetSymbolToConsole(cell.y - startY,cell.x - startX,  visChar.symbol, 
                                                                     visChar.color, visChar.bkColor )
     end
+
+    screen:SetSymbolToConsole(20, 3, control.time, "white", "black")
+    screen:SetSymbolToConsole(20, 4, control.hp.value, "white", "black")
+    screen:SetSymbolToConsole(20, 5, control.manna.value, "white", "black")
+    print("control.time", control.time)
+    
+    
+
     screen:changeBuffer()
 end
 
@@ -201,5 +212,50 @@ function Screen.showItemsList(tbl,  wName, J, weights)
 
     screen:changeBuffer()
 end
+
+function Screen.showBag(bag, i_item)
+    print("Screen.showBag")
+    i_item = i_item or 1
+    local selected = {}
+    
+    local ch = nil
+    repeat
+
+        screen:clear()
+        screen:SetSymbolToConsole(1, 0, "---------------------------------", "white", "black")
+        for i, item in ipairs(bag) do
+            local chosed = '[ ]'
+            local color = "white"
+            if i_item == i then
+                chosed = '[#]'
+                if selected[i_item] then
+                    color = "grey"
+                end
+            end
+            screen:SetSymbolToConsole(1, i, string.format("%s %s", chosed, tostring(item)), color, "black")
+        end
+
+        screen:changeBuffer()
+
+        ch = controller:playerMove()
+        print(ch)
+        if ch == direct.up then
+            if i_item > 1 then i_item = i_item - 1 end
+        elseif ch == direct.down then
+            if i_item < #bag then i_item = i_item + 1 end
+        elseif ch == direct.enter then
+            if selected[i_item] then
+                selected[i_item] = nil
+            else
+                selected[i_item] = true
+            end
+        end
+
+        print(ch == direct.esc )
+    until ch == direct.esc 
+
+    return selected
+end
+
 
 oldprint = print

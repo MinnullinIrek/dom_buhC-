@@ -1,4 +1,4 @@
-
+dname = ""
 direct={
 up = "UpArrow", 
 down = "DownArrow", 
@@ -38,8 +38,20 @@ function NameDescription:create()
     return setmetatable({}, self)
 end
 empty = {}
-print = function(mes, color)
-    screen:setText(tostring(mes), color or "lightRed")
+-- print = function(mes, color)
+    -- screen:setText(tostring(mes), color or "lightRed")
+-- end
+
+local function foreachTOstr(tbl)
+    local str = "\n"
+    for i, k in pairs(tbl) do
+        str = str.." "..tostring(k)
+    end
+    return str
+end
+
+print = function (...)
+    form:setText(foreachTOstr({dname or "", ...}))
 end
 
 local i = 1
@@ -50,5 +62,13 @@ end
 
 function length(t)
     return #t
+end
+
+function foreach_print(tbl)
+    print("----------------------------")
+    for i, k in pairs (tbl) do
+        print(i, k)
+    end
+    print("----------------------------")
 end
 

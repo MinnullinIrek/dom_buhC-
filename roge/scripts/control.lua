@@ -16,7 +16,18 @@ consolWidth     = 10
 consolHeight    = 10
 Time = T.createTime()
 characs = Chars.characs
-control = {time = 0, hp = 1, mn = 0}
+
+control = setmetatable({--[[time = 0, hp = 1, mn = 0]]}, 
+                        {__index = function(self, key)
+                            if key == 'time' then
+                                return Time.value
+                            elseif key == 'hp' then
+                                return characs.finalChar.hp
+                            elseif key == 'manna' then
+                                return characs.finalChar.manna
+                            end
+                        end
+                        })
 --screen
 --print = function (...) screen:print(...) end
 print("1", "2", 3, 4, 5)
@@ -37,10 +48,7 @@ event.subscribe(lunit.bodyParts, "wear",
     end
 )
 
-
-
-
-lunit.inventory         = inventory.inv
+lunit.inventory         = inventory.inv
 --lunit.inventory.unit    = lunit
 -- print("start")
 local lastCell
@@ -97,17 +105,19 @@ function showMap(map)
         lastCell = map.mover.cell
     end
     local cells,startX, startY = createCells(map, map.mover.cell)
-    Screen.showMap(cells,control, consolHeight, consolWidth, startX, startY)
+    Screen.showMap(cells, control, consolHeight, consolWidth, startX, startY)
 end
 
 
 event.subscribe(Map.mover.filler, "move", function(value) Time:increase(value*characs.resultChars.stepTmp) end)
 
---co =coroutine.create(function()
-local function print(...)    oldprint("control", ...)end
+
+-- local function print(...)    -- oldprint("control", ...)-- end
+
+
 
 function start(args)
-print("start")
+    print("start___________________________________________________")
 
     while true do
         showMap(Map)
@@ -120,7 +130,11 @@ print("start")
             print("ch=", "inventory")
             lunit.inventory:show(lunit)
         elseif ch == direct.pickUp then
-            print("PickUP")
+            local items = Screen.showBag(lunit.mover.cell.bag)
+
+            for i, b_true in pairs(items) do
+                table.insert(lunit.inventory.items, table.remove(lunit.mover.cell.bag, i))
+            end
         else
             Map.mover:Move(ch)
         end
@@ -129,58 +143,7 @@ end
 
 print(xpcall(start, debug.traceback))
 
---end)coroutine.resume(co)
+
 
 
 screen:SetSymbolToConsole(1,1,"ddddd", "white", "red")
-
-
-
---[===[require "inventory"
-require "chars"
-
-control = { tempus=0, exp=0, innerKeys = {current=0, count=0}}
-
-function plusTemp(dt)
-    control.tempus = control.tempus + dt * characs.resultChars.stepTmp
-end
-
-function control:show()
-    for k,v in pairs(chars) do
-        if type(v) ~="table" and type(v) ~="function" then
-            self[k] = v
-        end
-    end
-    screen:show(self)
-end
-control:show()
-
-function print(text)
-    screen:print(text)
-end
- -- print("ssss")
-while true do
-    control:show()
-    ch= controller:playerMove()
-    if(ch == nil)then
-    print(ch)
-    end
-    -- f:write(ch)
-    -- f:write("\n")
-
-    if(ch == "I") then
-        inventory:show()
-
-    elseif( ch == "C") then
-        characs:show()
-    else
-    end
-
-end
-
-
-
-
--- io.close(f)
-
-]===]

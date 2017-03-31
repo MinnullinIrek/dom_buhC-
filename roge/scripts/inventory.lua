@@ -21,11 +21,11 @@ local inventory           = {
         return "inventory"
     end,
 
-     __newindex = function(self, key, value)
-             if key ~= "weight" then            
-                pp[self][key] = value
-             end
-     end
+     -- __newindex = function(self, key, value)
+             -- if key ~= "weight" then            
+                -- pp[self][key] = value
+             -- end
+     -- end
 }
 
 function inventory:addItem(item)

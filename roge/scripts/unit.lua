@@ -1,7 +1,7 @@
 Chars =  require "chars"
-oldprint = print
+-- oldprint = print
 
-function print(...) oldprint("unit ", ...) end
+-- function print(...) oldprint("unit ", ...) end
 
 local bodyPart = {    
     __tostring = function(self) return self.type.." "..self.name end,    
