@@ -213,10 +213,11 @@ function Screen.showItemsList(tbl,  wName, J, weights)
     screen:changeBuffer()
 end
 
+local selected = {}
 function Screen.showBag(bag, i_item)
     print("Screen.showBag")
     i_item = i_item or 1
-    local selected = {}
+    
     
     local ch = nil
     repeat
@@ -228,9 +229,6 @@ function Screen.showBag(bag, i_item)
             local color = "white"
             if i_item == i then
                 chosed = '[#]'
-                if selected[i_item] then
-                    color = "grey"
-                end
             end
             screen:SetSymbolToConsole(1, i, string.format("%s %s", chosed, tostring(item)), color, "black")
         end
@@ -238,20 +236,14 @@ function Screen.showBag(bag, i_item)
         screen:changeBuffer()
 
         ch = controller:playerMove()
-        print(ch)
+
         if ch == direct.up then
             if i_item > 1 then i_item = i_item - 1 end
         elseif ch == direct.down then
             if i_item < #bag then i_item = i_item + 1 end
         elseif ch == direct.enter then
-            if selected[i_item] then
-                selected[i_item] = nil
-            else
-                selected[i_item] = true
-            end
+                table.insert(selected, table.remove(bag, i_item))
         end
-
-        print(ch == direct.esc )
     until ch == direct.esc 
 
     return selected

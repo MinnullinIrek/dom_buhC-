@@ -131,9 +131,9 @@ function start(args)
             lunit.inventory:show(lunit)
         elseif ch == direct.pickUp then
             local items = Screen.showBag(lunit.mover.cell.bag)
-
-            for i, b_true in pairs(items) do
-                table.insert(lunit.inventory.items, table.remove(lunit.mover.cell.bag, i))
+            print("after showBag", #items)
+            while items[1] do
+                table.insert(lunit.inventory.items, table.remove(items, 1))
             end
         else
             Map.mover:Move(ch)

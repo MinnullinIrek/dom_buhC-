@@ -1,6 +1,6 @@
 require "item"
-local function print(...)    oldprint("inventory", ...)end
-
+-- local function print(...)    -- oldprint("inventory", ...)-- end
+local dname = "inventory:"
 local M = {}
 local pp = setmetatable({}, {__mode = "k"})
 
@@ -64,6 +64,7 @@ function inv:show(unit)
     while ch ~= "Escape" do
         
         ch = controller:playerMove()
+        print("ch _____________________________________________________________________= ",ch)
         if ch == "B" then 
             showBodyParts(self, unit.bodyParts)
         elseif ch == direct.up then
@@ -80,6 +81,11 @@ function inv:show(unit)
             print("inv:show enter")
             self.items[self.current]:wear(unit.bodyParts)
             print("inv:show enter")
+        elseif ch == direct.d then
+            print("drop")
+            unit.mover.cell.bag = unit.mover.cell.bag or {}
+            local bag = unit.mover.cell.bag
+            table.insert(bag, table.remove(self.items, self.current))
         else
             
         end
